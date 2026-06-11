@@ -39,8 +39,9 @@ model Cliente {
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
 
-  contratos Contrato[]
-  pipeline  Pipeline[]
+  contratos   Contrato[]
+  pipeline    Pipeline[]
+  jerarquias  Jerarquia[]
 }
 
 enum TipoCliente {
@@ -195,4 +196,36 @@ enum TipoEvento {
   CONFERENCIA
   CAPACITACION
   OTRO
+}
+
+// ─── JERARQUÍAS ───────────────────────────────────────────────────────────────
+
+model Jerarquia {
+  id          String          @id @default(cuid())
+  titulo      String
+  descripcion String?
+  clienteId   String
+  cliente     Cliente         @relation(fields: [clienteId], references: [id])
+  nodos       NodoJerarquia[]
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+}
+
+model NodoJerarquia {
+  id          String          @id @default(cuid())
+  jerarquiaId String
+  jerarquia   Jerarquia       @relation(fields: [jerarquiaId], references: [id], onDelete: Cascade)
+  nombre      String
+  cargo       String?
+  lado        LadoJerarquia   @default(MINALGO)
+  parentId    String?
+  parent      NodoJerarquia?  @relation("NodoHijos", fields: [parentId], references: [id], onDelete: SetNull)
+  hijos       NodoJerarquia[] @relation("NodoHijos")
+  orden       Int             @default(0)
+  createdAt   DateTime        @default(now())
+}
+
+enum LadoJerarquia {
+  MINALGO
+  CLIENTE
 }

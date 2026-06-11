@@ -10,6 +10,7 @@ const nav = [
   { href: "/planilla", label: "Planilla" },
   { href: "/pipeline", label: "Proyecciones" },
   { href: "/calendario", label: "Calendario" },
+  { href: "/jerarquias", label: "Jerarquías" },
 ];
 
 export default function DashboardLayout({
