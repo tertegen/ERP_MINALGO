@@ -347,13 +347,18 @@ export default function JerarquiasPage() {
   }, []);
 
   useEffect(() => {
-    Promise.all([
-      fetch("/api/jerarquias").then((r) => r.json()),
-      fetch("/api/clientes").then((r) => r.json()),
-    ]).then(([j, c]) => {
-      setLista(j);
-      setClientes(c);
-      if (j.length > 0) fetchSelected(j[0].id);
+    const loadClientes = fetch("/api/clientes")
+      .then((r) => r.ok ? r.json() : [])
+      .catch(() => []);
+
+    const loadJerarquias = fetch("/api/jerarquias")
+      .then((r) => r.ok ? r.json() : [])
+      .catch(() => []);
+
+    Promise.all([loadJerarquias, loadClientes]).then(([j, c]) => {
+      setLista(Array.isArray(j) ? j : []);
+      setClientes(Array.isArray(c) ? c : []);
+      if (Array.isArray(j) && j.length > 0) fetchSelected(j[0].id);
       setLoading(false);
     });
   }, [fetchSelected]);

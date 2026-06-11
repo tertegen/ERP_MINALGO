@@ -2,14 +2,19 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 export async function GET() {
-  const jerarquias = await prisma.jerarquia.findMany({
-    orderBy: { createdAt: "desc" },
-    include: {
-      cliente: { select: { id: true, nombre: true } },
-      _count: { select: { nodos: true } },
-    },
-  });
-  return NextResponse.json(jerarquias);
+  try {
+    const jerarquias = await prisma.jerarquia.findMany({
+      orderBy: { createdAt: "desc" },
+      include: {
+        cliente: { select: { id: true, nombre: true } },
+        _count: { select: { nodos: true } },
+      },
+    });
+    return NextResponse.json(jerarquias);
+  } catch (e) {
+    console.error("GET /api/jerarquias error:", e);
+    return NextResponse.json({ error: "Error al cargar jerarquías" }, { status: 500 });
+  }
 }
 
 export async function POST(req: Request) {
