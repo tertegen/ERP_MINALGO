@@ -73,7 +73,7 @@ export default function DashboardHome() {
             </Link>
 
             <Link href="/pipeline" className="bg-white border border-gray-200 rounded-xl p-5 hover:border-blue-300 transition-colors group">
-              <p className="text-xs text-gray-500 mb-2">Pipeline activo</p>
+              <p className="text-xs text-gray-500 mb-2">Proyecciones activas</p>
               <p className="text-2xl font-bold text-gray-900 mb-1">{fmt(data.pipeline.valor)}</p>
               <p className="text-xs text-gray-400">{data.pipeline.items} oportunidades</p>
             </Link>
@@ -89,7 +89,7 @@ export default function DashboardHome() {
             {/* Pipeline por etapa */}
             <div className="col-span-1 bg-white border border-gray-200 rounded-xl p-5">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-sm font-semibold text-gray-700">Pipeline por etapa</h2>
+                <h2 className="text-sm font-semibold text-gray-700">Proyecciones por etapa</h2>
                 <Link href="/pipeline" className="text-xs text-blue-600 hover:text-blue-700">Ver todo →</Link>
               </div>
               <div className="space-y-3">
@@ -168,7 +168,7 @@ export default function DashboardHome() {
             {[
               { href: "/clientes", label: "Nuevo cliente", icon: "👤" },
               { href: "/contratos", label: "Nuevo contrato", icon: "📄" },
-              { href: "/pipeline", label: "Nueva oportunidad", icon: "📊" },
+              { href: "/pipeline", label: "Nueva proyección", icon: "📊" },
               { href: "/planilla", label: "Registrar planilla", icon: "💰" },
               { href: "/calendario", label: "Nuevo evento", icon: "📅" },
             ].map(({ href, label, icon }) => (

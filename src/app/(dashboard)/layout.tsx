@@ -8,7 +8,7 @@ const nav = [
   { href: "/clientes", label: "Clientes", icon: "⬡" },
   { href: "/contratos", label: "Contratos", icon: "◧" },
   { href: "/planilla", label: "Planilla", icon: "▤" },
-  { href: "/pipeline", label: "Pipeline", icon: "◈" },
+  { href: "/pipeline", label: "Proyecciones", icon: "◈" },
   { href: "/calendario", label: "Calendario", icon: "◫" },
 ];
 

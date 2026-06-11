@@ -116,16 +116,16 @@ export default function PipelinePage() {
     <div className="p-8">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-900">Pipeline</h1>
+          <h1 className="text-2xl font-semibold text-gray-900">Proyecciones</h1>
           <p className="text-sm text-gray-500 mt-1">
-            {items.filter((i) => !["GANADO", "PERDIDO"].includes(i.etapa)).length} oportunidades activas
+            {items.filter((i) => !["GANADO", "PERDIDO"].includes(i.etapa)).length} proyecciones activas
           </p>
         </div>
         <button
           onClick={() => { setModal(true); setForm(empty); setError(""); }}
           className="bg-blue-600 text-white text-sm px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
         >
-          + Nueva oportunidad
+          + Nueva proyección
         </button>
       </div>
 
@@ -212,7 +212,7 @@ export default function PipelinePage() {
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl w-full max-w-lg shadow-xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 sticky top-0 bg-white">
-              <h2 className="text-base font-semibold text-gray-900">Nueva oportunidad</h2>
+              <h2 className="text-base font-semibold text-gray-900">Nueva proyección</h2>
               <button onClick={() => setModal(false)} className="text-gray-400 hover:text-gray-600 text-xl leading-none">×</button>
             </div>
             <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
