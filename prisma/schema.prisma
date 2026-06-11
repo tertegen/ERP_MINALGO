@@ -1,0 +1,198 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── AUTH ─────────────────────────────────────────────────────────────────────
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(STAFF)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum Role {
+  ADMIN
+  STAFF
+}
+
+// ─── CLIENTES & CONTRATOS ─────────────────────────────────────────────────────
+
+model Cliente {
+  id        String        @id @default(cuid())
+  nombre    String
+  ruc       String?       @unique
+  contacto  String?
+  email     String?
+  telefono  String?
+  tipo      TipoCliente
+  estado    EstadoCliente @default(PROSPECTO)
+  notas     String?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  contratos Contrato[]
+  pipeline  Pipeline[]
+}
+
+enum TipoCliente {
+  MINERA
+  CONSTRUCTORA
+  EMPRESA
+  OTRO
+}
+
+enum EstadoCliente {
+  PROSPECTO
+  ACTIVO
+  INACTIVO
+}
+
+model Contrato {
+  id          String         @id @default(cuid())
+  clienteId   String
+  cliente     Cliente        @relation(fields: [clienteId], references: [id])
+  codigo      String?        @unique
+  descripcion String
+  moneda      Moneda         @default(SOLES)
+  montoTotal  Decimal        @db.Decimal(12, 2)
+  fechaInicio DateTime
+  fechaFin    DateTime?
+  estado      EstadoContrato @default(ACTIVO)
+  notas       String?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  gastos      Gasto[]
+}
+
+enum Moneda {
+  SOLES
+  DOLARES
+}
+
+enum EstadoContrato {
+  ACTIVO
+  PAUSADO
+  CERRADO
+}
+
+// ─── PLANILLA / GASTOS ────────────────────────────────────────────────────────
+
+model Gasto {
+  id          String    @id @default(cuid())
+  contratoId  String
+  contrato    Contrato  @relation(fields: [contratoId], references: [id])
+  descripcion String
+  categoria   String?
+  montoSoles  Decimal   @db.Decimal(10, 2)
+  mes         Int
+  anio        Int
+  tipo        TipoGasto @default(REAL)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+enum TipoGasto {
+  PROPUESTO
+  REAL
+}
+
+model Personal {
+  id        String     @id @default(cuid())
+  nombre    String
+  cargo     String
+  dni       String?    @unique
+  email     String?
+  telefono  String?
+  activo    Boolean    @default(true)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  planilla  Planilla[]
+}
+
+model Planilla {
+  id          String   @id @default(cuid())
+  personalId  String
+  personal    Personal @relation(fields: [personalId], references: [id])
+  mes         Int
+  anio        Int
+  sueldo      Decimal  @db.Decimal(10, 2)
+  adicionales Decimal  @db.Decimal(10, 2) @default(0)
+  descuentos  Decimal  @db.Decimal(10, 2) @default(0)
+  total       Decimal  @db.Decimal(10, 2)
+  notas       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([personalId, mes, anio])
+}
+
+// ─── PIPELINE / PROYECCIÓN ────────────────────────────────────────────────────
+
+model Pipeline {
+  id            String        @id @default(cuid())
+  clienteId     String
+  cliente       Cliente       @relation(fields: [clienteId], references: [id])
+  descripcion   String
+  montoEstimado Decimal?      @db.Decimal(12, 2)
+  moneda        Moneda        @default(DOLARES)
+  probabilidad  Int?
+  etapa         EtapaPipeline @default(CONTACTO_INICIAL)
+  fechaEstimada DateTime?
+  notas         String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  actividades   Actividad[]
+}
+
+enum EtapaPipeline {
+  CONTACTO_INICIAL
+  PROPUESTA_ENVIADA
+  NEGOCIACION
+  GANADO
+  PERDIDO
+}
+
+model Actividad {
+  id          String   @id @default(cuid())
+  pipelineId  String
+  pipeline    Pipeline @relation(fields: [pipelineId], references: [id])
+  tipo        String
+  descripcion String
+  fecha       DateTime
+  completada  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+}
+
+// ─── CALENDARIO / OPERACIONES ─────────────────────────────────────────────────
+
+model Evento {
+  id          String     @id @default(cuid())
+  titulo      String
+  descripcion String?
+  tipo        TipoEvento @default(REUNION)
+  fechaInicio DateTime
+  fechaFin    DateTime?
+  lugar       String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+enum TipoEvento {
+  REUNION
+  VISITA_CAMPO
+  CONFERENCIA
+  CAPACITACION
+  OTRO
+}
