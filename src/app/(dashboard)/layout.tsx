@@ -4,12 +4,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const nav = [
-  { href: "/dashboard", label: "Dashboard", icon: "⊞" },
-  { href: "/clientes", label: "Clientes", icon: "⬡" },
-  { href: "/contratos", label: "Contratos", icon: "◧" },
-  { href: "/planilla", label: "Planilla", icon: "▤" },
-  { href: "/pipeline", label: "Proyecciones", icon: "◈" },
-  { href: "/calendario", label: "Calendario", icon: "◫" },
+  { href: "/dashboard", label: "Dashboard" },
+  { href: "/clientes", label: "Clientes" },
+  { href: "/contratos", label: "Contratos" },
+  { href: "/planilla", label: "Planilla" },
+  { href: "/pipeline", label: "Proyecciones" },
+  { href: "/calendario", label: "Calendario" },
 ];
 
 export default function DashboardLayout({
@@ -20,41 +20,47 @@ export default function DashboardLayout({
   const pathname = usePathname();
 
   return (
-    <div className="flex h-full">
+    <div className="flex h-full bg-[#F0EFED]">
       {/* Sidebar */}
-      <aside className="w-56 bg-white border-r border-gray-200 flex flex-col shrink-0">
-        <div className="px-5 py-5 border-b border-gray-100">
-          <span className="text-base font-semibold text-gray-900 tracking-tight">
+      <aside className="w-52 flex flex-col shrink-0">
+        <div className="px-4 pt-6 pb-5">
+          <span className="text-[15px] font-semibold text-gray-900 tracking-tight">
             MINALGO
           </span>
-          <span className="block text-xs text-gray-400 mt-0.5">ERP v1.0</span>
+          <span className="block text-[11px] text-gray-400 mt-0.5">Dashboard Comercial</span>
         </div>
-        <nav className="flex-1 px-3 py-4 space-y-0.5">
-          {nav.map((item) => {
-            const active = pathname.startsWith(item.href);
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors ${
-                  active
-                    ? "bg-blue-50 text-blue-700 font-medium"
-                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                }`}
-              >
-                <span className="text-base leading-none">{item.icon}</span>
-                {item.label}
-              </Link>
-            );
-          })}
-        </nav>
-        <div className="px-5 py-4 border-t border-gray-100 text-xs text-gray-400">
-          Mario Lopéz · Admin
+
+        <div className="px-3 mb-1">
+          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest px-2 mb-1.5">
+            Vistas
+          </p>
+          <nav className="space-y-0.5">
+            {nav.map((item) => {
+              const active = pathname.startsWith(item.href);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`block px-2.5 py-1.5 rounded-md text-[13px] transition-colors ${
+                    active
+                      ? "bg-gray-900 text-white font-medium"
+                      : "text-gray-600 hover:bg-black/5 hover:text-gray-900"
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
+
+        <div className="mt-auto px-4 py-4 text-[11px] text-gray-400">
+          Mario López · Admin
         </div>
       </aside>
 
       {/* Main content */}
-      <main className="flex-1 overflow-auto">
+      <main className="flex-1 overflow-auto bg-white rounded-tl-2xl shadow-sm">
         {children}
       </main>
     </div>
