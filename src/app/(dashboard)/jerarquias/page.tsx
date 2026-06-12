@@ -333,17 +333,19 @@ export default function JerarquiasPage() {
   const [modal, setModal] = useState(false);
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
+  const [modalError, setModalError] = useState("");
 
   const fetchLista = useCallback(async () => {
-    const data = await fetch("/api/jerarquias").then((r) => r.json());
-    setLista(data);
+    const res = await fetch("/api/jerarquias");
+    const data = res.ok ? await res.json() : [];
+    setLista(Array.isArray(data) ? data : []);
     setLoading(false);
-    return data as JerarquiaResumen[];
+    return (Array.isArray(data) ? data : []) as JerarquiaResumen[];
   }, []);
 
   const fetchSelected = useCallback(async (id: string) => {
-    const data = await fetch(`/api/jerarquias/${id}`).then((r) => r.json());
-    setSelected(data);
+    const res = await fetch(`/api/jerarquias/${id}`);
+    if (res.ok) setSelected(await res.json());
   }, []);
 
   useEffect(() => {
@@ -365,6 +367,7 @@ export default function JerarquiasPage() {
 
   const handleCreate = async (e: { preventDefault(): void }) => {
     e.preventDefault();
+    setModalError("");
     setSaving(true);
     const res = await fetch("/api/jerarquias", {
       method: "POST",
@@ -372,7 +375,11 @@ export default function JerarquiasPage() {
       body: JSON.stringify(form),
     });
     setSaving(false);
-    if (!res.ok) return;
+    if (!res.ok) {
+      const d = await res.json().catch(() => ({}));
+      setModalError(d.error ?? "Error al crear la jerarquía");
+      return;
+    }
     const nueva = await res.json();
     setModal(false);
     setForm(emptyForm);
@@ -399,7 +406,7 @@ export default function JerarquiasPage() {
             <p className="text-sm text-gray-500 mt-0.5">Estructura operativa por proyecto y cliente</p>
           </div>
           <button
-            onClick={() => { setModal(true); setForm(emptyForm); }}
+            onClick={() => { setModal(true); setForm(emptyForm); setModalError(""); }}
             className="bg-gray-900 text-white text-sm px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
           >
             + Nueva jerarquía
@@ -513,6 +520,9 @@ export default function JerarquiasPage() {
               <button onClick={() => setModal(false)} className="text-gray-400 hover:text-gray-600 text-xl leading-none">×</button>
             </div>
             <form onSubmit={handleCreate} className="px-6 py-5 space-y-4">
+              {modalError && (
+                <p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-lg">{modalError}</p>
+              )}
               <div>
                 <label className="block text-xs font-medium text-gray-700 mb-1">Cliente *</label>
                 <select

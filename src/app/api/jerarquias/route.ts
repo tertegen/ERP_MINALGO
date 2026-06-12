@@ -18,13 +18,18 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  const { titulo, descripcion, clienteId } = await req.json();
-  if (!titulo || !clienteId) {
-    return NextResponse.json({ error: "Título y cliente son requeridos" }, { status: 400 });
+  try {
+    const { titulo, descripcion, clienteId } = await req.json();
+    if (!titulo || !clienteId) {
+      return NextResponse.json({ error: "Título y cliente son requeridos" }, { status: 400 });
+    }
+    const jerarquia = await prisma.jerarquia.create({
+      data: { titulo, descripcion: descripcion || null, clienteId },
+      include: { cliente: { select: { id: true, nombre: true } } },
+    });
+    return NextResponse.json(jerarquia, { status: 201 });
+  } catch (e) {
+    console.error("POST /api/jerarquias error:", e);
+    return NextResponse.json({ error: String(e) }, { status: 500 });
   }
-  const jerarquia = await prisma.jerarquia.create({
-    data: { titulo, descripcion: descripcion || null, clienteId },
-    include: { cliente: { select: { id: true, nombre: true } } },
-  });
-  return NextResponse.json(jerarquia, { status: 201 });
 }
